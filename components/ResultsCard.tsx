@@ -28,7 +28,8 @@ const getStatusIcon = (status: string) => {
 export const ResultsCard: React.FC<ResultsCardProps> = ({ data, groundingUrls }) => {
   const [copied, setCopied] = useState(false);
   
-  const shareText = `*Semakan Takhrij Hadis.my*%0A%0A*Status:* ${data.status}%0A*Matan:* ${data.matan.substring(0, 50)}...%0A*Terjemahan:* ${data.translation.substring(0, 100)}...%0A%0ASemak penuh di Takhrij Hadis.my`;
+  // Clean text for sharing/copying (removed asterisks)
+  const shareText = `Semakan Takhrij Hadis.my%0A%0AStatus: ${data.status}%0AMatan: ${data.matan.substring(0, 50)}...%0ATerjemahan: ${data.translation.substring(0, 100)}...%0A%0ASemak penuh di Takhrij Hadis.my`;
 
   const shareToWhatsapp = () => {
     window.open(`https://wa.me/?text=${shareText}`, '_blank');
@@ -39,10 +40,46 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({ data, groundingUrls })
   };
 
   const handleCopy = () => {
-    const textToCopy = `*Semakan Takhrij Hadis.my*\n\n*Status:* ${data.status}\n\n*Matan:* ${data.matan}\n\n*Terjemahan:* ${data.translation}\n\n*Sumber:* ${data.sources.join(', ')}\n\n*Huraian:* ${data.explanation}\n\n_Disemak pada: ${new Date().toLocaleDateString()}_`;
+    // Clean format without asterisks
+    const textToCopy = `Semakan Takhrij Hadis.my\n\nStatus: ${data.status}\n\nMatan: ${data.matan}\n\nTerjemahan: ${data.translation}\n\nSumber: ${data.sources.join(', ')}\n\nHuraian: ${data.explanation}\n\nDisemak pada: ${new Date().toLocaleDateString()}`;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Custom text formatter to style headers without markdown symbols
+  const renderFormattedExplanation = (text: string) => {
+    // Remove any accidental asterisks from API
+    const cleanText = text.replace(/\*/g, '');
+    
+    const lines = cleanText.split('\n');
+    return lines.map((line, index) => {
+      const trimmed = line.trim();
+      // Detect known headers
+      const isHeader = ['SUMBER', 'PERBANDINGAN TEKS', 'STATUS HUKUM', 'SUMBER RUJUKAN', 'STATUS'].some(h => 
+        trimmed.toUpperCase() === h || trimmed.toUpperCase().startsWith(h + ':')
+      );
+      
+      if (isHeader) {
+        return (
+          <div key={index} className="text-emerald-800 font-bold text-sm uppercase tracking-wide mt-6 mb-2 pb-1 border-b border-emerald-100">
+            {trimmed}
+          </div>
+        );
+      }
+      
+      // Handle list items manually if they start with - or •
+      if (trimmed.startsWith('-') || trimmed.startsWith('•')) {
+        return <div key={index} className="pl-4 mb-1 text-slate-700">{line}</div>;
+      }
+
+      // Empty lines
+      if (!trimmed) {
+        return <div key={index} className="h-2"></div>;
+      }
+
+      return <div key={index} className="mb-2 text-slate-700">{line}</div>;
+    });
   };
 
   return (
@@ -126,8 +163,8 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({ data, groundingUrls })
                <FileText size={16} className="text-emerald-600" />
                Huraian Status & Analisis Sanad
             </h3>
-            <div className="text-sm text-slate-700 leading-7 bg-slate-50 p-5 rounded-lg border border-slate-100 whitespace-pre-line text-justify">
-              {data.explanation}
+            <div className="text-sm text-slate-700 leading-7 bg-slate-50 p-5 rounded-lg border border-slate-100 text-justify">
+              {renderFormattedExplanation(data.explanation)}
             </div>
           </div>
         </div>
