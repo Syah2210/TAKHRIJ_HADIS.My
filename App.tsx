@@ -145,14 +145,14 @@ const App: React.FC = () => {
             <form onSubmit={handleSearch} className="relative z-20">
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-200"></div>
-                <div className="relative bg-white rounded-2xl shadow-xl">
+                <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl transition-colors">
                   <input
                     type="text"
                     value={state.query}
                     onChange={handleInputChange}
                     onFocus={() => state.query.length > 1 && setShowSuggestions(true)}
                     placeholder="Taip matan hadis atau kata kunci..."
-                    className="w-full pl-14 pr-16 py-5 rounded-2xl border-0 focus:ring-0 text-lg text-slate-800 placeholder:text-slate-400"
+                    className="w-full pl-14 pr-16 py-5 rounded-2xl border-0 focus:ring-0 text-lg text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-transparent"
                     disabled={state.isLoading}
                   />
                   <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={24} />
@@ -169,7 +169,7 @@ const App: React.FC = () => {
 
             {/* Auto Suggestions Dropdown */}
             {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden z-30 animate-fade-in-up origin-top">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden z-30 animate-fade-in-up origin-top text-left">
                 <div className="py-2">
                   <h4 className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Cadangan Carian</h4>
                   {suggestions.map((s, idx) => (

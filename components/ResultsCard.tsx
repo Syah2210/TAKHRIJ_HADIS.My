@@ -87,7 +87,7 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({ data, groundingUrls })
         {/* Matan (Arabic) */}
         <div className="space-y-4 text-center">
           <h3 className="text-xs uppercase tracking-wider font-semibold text-slate-400">Matan Hadis</h3>
-          <p className="font-arabic text-2xl md:text-3xl leading-loose text-slate-800" dir="rtl">
+          <p className="font-arabic text-2xl md:text-3xl leading-[2.6] py-2 text-slate-800" dir="rtl">
             {data.matan}
           </p>
         </div>
